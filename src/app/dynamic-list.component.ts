@@ -1,17 +1,20 @@
+import { NgFor } from "@angular/common";
 import { Component, Input } from "@angular/core";
 import { DynamicItemComponent } from "./dynamic-item";
-import { CommonModule } from "@angular/common";
 import { ItemData } from "./types";
 
 @Component({
   selector: 'app-dynamic-list',
   template: `
     <div *ngFor="let item of items">
-      <app-dynamic-item [item]="item" (clicked)="updateLastClicked($event)"></app-dynamic-item>
+      <app-dynamic-item
+        [item]="item"
+        [small]="small"
+        (clicked)="updateLastClicked($event)" />
     </div>
     <p>last clicked: {{lastClickedState}}</p>
   `,
-  imports: [DynamicItemComponent, CommonModule],
+  imports: [DynamicItemComponent, NgFor],
   standalone: true,
   styles: [
     ':host { display: flex; flex-direction: column; gap: .5em;}',
@@ -20,6 +23,7 @@ import { ItemData } from "./types";
 })
 export class DynamicListComponent {
   @Input() items!: ItemData[];
+  @Input() small = false;
 
   lastClickedState = '';
 

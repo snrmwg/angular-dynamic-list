@@ -1,8 +1,18 @@
 
 <h2>Dynamic Items List</h2>
 
+<div>
+  <input type="checkbox" [(ngModel)]="small_mode" > small mode (2nd list)
+</div>
 
-<app-dynamic-list [items]="items"></app-dynamic-list>
+<div style="display: flex; gap: 1em">
+  <div style="flex: 2">
+    <app-dynamic-list [items]="items" [small]="false"></app-dynamic-list>
+  </div>
+  <div style="flex: 1">
+    <app-dynamic-list [items]="items" [small]="small_mode"></app-dynamic-list>
+  </div>
+</div>
 
 <button (click)="updateData(0)">update 1st data</button>
 <button (click)="addItem()">add item</button>

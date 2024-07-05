@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { DynamicListComponent } from './dynamic-list.component';
 import { ItemData, ItemDataB } from './types';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [DynamicListComponent],
+  imports: [DynamicListComponent, FormsModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
@@ -16,6 +17,8 @@ export class AppComponent {
     { type: 'typeB', data: 'Data for B', anotherValue: 42 } as ItemDataB
     // Add more items as needed
   ];
+
+  small_mode = true;
 
   updateData(index: number) {
     let newData = `Updated data @ ${new Date().toLocaleTimeString()}`;

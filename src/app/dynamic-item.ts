@@ -1,9 +1,7 @@
-import { CommonModule } from "@angular/common";
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from "@angular/core";
-import { ComponentA } from "./component-a.component";
-
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild } from "@angular/core";
 import { ViewContainerRef } from '@angular/core';
-import { ComponentB } from "./component-b.component";
+import { ComponentA } from "./component-a.component";
+import { ComponentB, ComponentBsmall } from "./component-b.component";
 import { ItemData } from "./types";
 
 const componentMapping: Record<string, any> = {
@@ -11,30 +9,41 @@ const componentMapping: Record<string, any> = {
   'typeB': ComponentB,
 };
 
+const componentMapping_small: Record<string, any> = {
+  'typeA': ComponentA,
+  'typeB': ComponentBsmall,
+};
+
 @Component({
   selector: 'app-dynamic-item',
   template: `<ng-container #vcr />`,
   standalone: true,
-  imports: [CommonModule, ComponentA]
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class DynamicItemComponent implements OnInit, OnDestroy {
+export class DynamicItemComponent implements OnInit, OnDestroy, OnChanges {
+
   @Input() item!: ItemData;
+  @Input() small!: boolean;
   @Output() clicked = new EventEmitter<ItemData>();
-  @ViewChild('vcr', {static: true, read: ViewContainerRef}) vcr!: ViewContainerRef;
+  @ViewChild('vcr', { static: true, read: ViewContainerRef }) vcr!: ViewContainerRef;
 
   private componentRef: any;
-  
+
   ngOnInit(): void {
     this.loadComponent();
   }
 
   loadComponent() {
-    const component = componentMapping[this.item.type];
+    let component = this.small
+      ? componentMapping_small[this.item.type]
+      : componentMapping[this.item.type];
+
     this.vcr.clear();
 
     this.componentRef = this.vcr.createComponent(component);
 
     this.componentRef.instance.item = this.item;
+    this.componentRef.instance.small = this.small;
 
     if (this.componentRef.instance.clicked) {
       this.componentRef.instance.clicked.subscribe((event: any) => {
@@ -43,11 +52,15 @@ export class DynamicItemComponent implements OnInit, OnDestroy {
       });
     }
   }
-  
+
+  ngOnChanges(changes: SimpleChanges): void {
+    this.loadComponent();
+  }
+
   ngOnDestroy(): void {
     if (this.componentRef) {
       this.componentRef.destroy()
     }
   }
-  
+
 }
