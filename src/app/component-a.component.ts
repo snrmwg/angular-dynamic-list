@@ -6,7 +6,7 @@ import { ItemData } from "./types";
   standalone: true,
   imports: [NgIf],
   template: `
-    <h2>Component A <button (click)="clicked.emit()">click!</button></h2>
+    <h2>Component A <button (click)="clicked.emit($event)">click!</button></h2>
     <p *ngIf="!small">data: {{item.data}}</p>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -14,5 +14,17 @@ import { ItemData } from "./types";
 export class ComponentA {
   @Input() item!: ItemData;
   @Input() small!: boolean;
-  @Output() clicked = new EventEmitter<void>();
+  @Output() clicked = new EventEmitter<UIEvent>();
+}
+
+@Component({
+  standalone: true,
+  template: `
+    <h3>Component A overlay</h3>
+    <p>data: {{item.data}}</p>
+  `,
+  changeDetection: ChangeDetectionStrategy.OnPush
+})
+export class ComponentAoverlay {
+  @Input() item!: ItemData;
 }

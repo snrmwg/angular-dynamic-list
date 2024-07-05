@@ -14,5 +14,7 @@
   </div>
 </div>
 
-<button (click)="updateData(0)">update 1st data</button>
-<button (click)="addItem()">add item</button>
+<div style="display: flex; gap: .5em">
+  <p-button (click)="updateData(0)" label="update 1st data" />
+  <p-button (click)="addItem()" label="add item" severity="success"/>
+</div>

@@ -1,0 +1,12 @@
+<div *ngFor="let item of items" class="itm">
+  <app-dynamic-list-item [item]="item" [small]="small" (clicked)="onItemClick($event)" />
+</div>
+<p-overlayPanel #op hideTransitionOptions="0s">
+  <div style="max-width: 30em;">
+    <app-dynamic-overlayitem [item]="lastClickedItem" />
+  </div>
+</p-overlayPanel>
+
+<div>
+  <p>last clicked: {{lastClickedState}}</p>
+</div>

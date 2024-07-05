@@ -1,33 +1,38 @@
-import { NgFor } from "@angular/common";
-import { Component, Input } from "@angular/core";
-import { DynamicItemComponent } from "./dynamic-item";
+import { NgFor, NgIf } from "@angular/common";
+import { Component, Input, ViewChild } from "@angular/core";
+import { Button } from 'primeng/button';
+import { OverlayPanel, OverlayPanelModule } from 'primeng/overlaypanel';
+import { DynamicItemClickEvent, DynamicListItemComponent, DynamicOverlayItemComponent } from "./dynamic-list-item";
 import { ItemData } from "./types";
 
 @Component({
   selector: 'app-dynamic-list',
-  template: `
-    <div *ngFor="let item of items">
-      <app-dynamic-item
-        [item]="item"
-        [small]="small"
-        (clicked)="updateLastClicked($event)" />
-    </div>
-    <p>last clicked: {{lastClickedState}}</p>
-  `,
-  imports: [DynamicItemComponent, NgFor],
+  templateUrl: './dynamic-list.component.html',
+  imports: [DynamicListItemComponent, DynamicOverlayItemComponent, NgFor, NgIf, OverlayPanelModule, Button],
   standalone: true,
   styles: [
     ':host { display: flex; flex-direction: column; gap: .5em;}',
-    'div { border: 1px dotted black; padding: 1em; border-radius: 5px;box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);}'
+    'div.itm { border: 1px dotted black; padding: 1em; border-radius: 5px;box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);}'
   ]
 })
 export class DynamicListComponent {
-  @Input() items!: ItemData[];
+  @Input({ required: true }) items!: ItemData[];
   @Input() small = false;
+  @ViewChild('op') op!: OverlayPanel;
 
   lastClickedState = '';
+  lastClickedItem?: ItemData;
 
-  updateLastClicked(item: ItemData) {
-    this.lastClickedState = `Last clicked: ${JSON.stringify(item)}`;
+  onItemClick($event: DynamicItemClickEvent) {
+    this.lastClickedItem = $event.item;
+    this.lastClickedState = `Last clicked: ${JSON.stringify($event.item)}`;
+    if (this.op.overlayVisible) {
+      this.op.hide();
+      setTimeout(() => {
+        this.op.show($event.event);
+      }, 0)
+    } else {
+      this.op.show($event.event);
+    }
   }
 }

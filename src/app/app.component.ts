@@ -1,21 +1,21 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DynamicListComponent } from './dynamic-list.component';
-import { ItemData, ItemDataB } from './types';
+import { Button } from 'primeng/button';
+import { interval } from 'rxjs';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [DynamicListComponent, FormsModule],
+  imports: [DynamicListComponent, FormsModule, Button],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
 
-  items: ItemData[] = [
-    { type: 'typeA', data: 'Data for A' } as ItemData,
-    { type: 'typeB', data: 'Data for B', anotherValue: 42 } as ItemDataB
-    // Add more items as needed
+  items: any[] = [
+    { type: 'typeA', data: 'Data for A' },
+    { type: 'typeB', data: 'Data for B', anotherValue: 42 }
   ];
 
   small_mode = true;
@@ -32,7 +32,15 @@ export class AppComponent {
     });
   }
   
-  
+  autoUpdateSub = interval(3_000).subscribe(() => {
+    this.items = this.items.map((item, i) => {
+      if (i === 1) {
+        return { ...item, anotherValue: item.anotherValue + 1};
+      }
+      return item;
+    });
+  })
+
   addItem() {
     this.items.push({ type: 'typeA', data: 'New item' });
   }
